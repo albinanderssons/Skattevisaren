@@ -1,0 +1,108 @@
+<div class="container py-4">
+  <h1 class="display-4 text-center mb-4">Skatteberäkning</h1>
+  
+  <form [formGroup]="myForm" (ngSubmit)="handleSubmit()" novalidate>
+    <div class="row bg-white shadow rounded">
+      <!-- Input Section -->
+      <div class="col-md-6 p-4">
+        <h3 class="mb-4">Indata</h3>
+        
+        <mat-form-field class="w-100 mb-3" appearance="outline">
+          <mat-label>Kommun</mat-label>
+          <input matInput formControlName="kommun" [matAutocomplete]="auto" (ngModelChange)="onTypeKommun()"
+            oninput="this.value = this.value.toUpperCase().trim()">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let kommun of filteredKommuner | async" [value]="kommun">
+              {{ kommun }}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="myForm.get('kommun')?.hasError('incorrect')">Välj en kommun från listan</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-100 mb-3" appearance="outline">
+          <mat-label>Inkomstår</mat-label>
+          <mat-select formControlName="year" (ngModelChange)="onYearSelected()">
+            <mat-option *ngFor="let year of years" [value]="year">
+              {{ year }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="w-100 mb-3" appearance="outline">
+          <mat-label>Årsinkomst (SEK)</mat-label>
+          <input matInput formControlName="inkomst" type="number" min="1">
+          <span matSuffix>kr</span>
+          <mat-error *ngIf="myForm.get('inkomst')?.invalid">Ange en giltig inkomst</mat-error>
+        </mat-form-field>
+
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <mat-checkbox class="mb-3" formControlName="medlem" (ngModelChange)="onMedlemChange()">
+              Medlem i Svenska kyrkan
+            </mat-checkbox>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field *ngIf="(myForm.get('medlem')?.value)" class="w-100" 
+              matTooltip="Välj Kommun och inkomstår först"
+              [matTooltipDisabled]="(selectedY && selectedK && myForm.get('medlem')?.value)"
+              appearance="outline">
+              <mat-label>Församling</mat-label>
+              <mat-select formControlName="forsamling">
+                <mat-option
+                  *ngFor="let forsamling of (selectedY && selectedK && myForm.get('medlem')?.value) ? forsamlingar : []"
+                  [value]="forsamling">
+                  {{ forsamling }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <button mat-raised-button color="primary" type="submit" [disabled]="!myForm.valid">
+            Beräkna skatt
+          </button>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="col-md-6 p-4 bg-light rounded-end">
+        <h3 class="mb-4">Resultat</h3>
+        
+        <div *ngIf="resultArray.length > 0" class="result-container">
+          <div class="card mb-3 p-3 border-0 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Bruttolön</h5>
+              <p class="card-text display-6">{{resultArray[2] | number:'1.0-0'}} kr</p>
+            </div>
+          </div>
+          
+          <div class="card mb-3 p-3 border-0 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Nettolön</h5>
+              <p class="card-text display-6 text-success">{{resultArray[1] | number:'1.0-0'}} kr</p>
+            </div>
+          </div>
+          
+          <div class="card mb-3 p-3 border-0 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Skatt</h5>
+              <p class="card-text display-6 text-danger">{{resultArray[0] | number:'1.0-0'}} kr</p>
+            </div>
+          </div>
+          
+          <div class="card mb-3 p-3 border-0 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Marginalskatt</h5>
+              <p class="card-text display-6">{{resultArray[3] | number:'1.1-1'}}%</p>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="resultArray.length === 0" class="text-center p-5">
+          <p class="text-muted">Fyll i formuläret och klicka på Beräkna för att se resultatet</p>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,56 @@
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+  font-size: smaller;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+.boldClass{
+  font-weight: bold;
+}
+
+.breadcrumb-item {
+  a {
+    color: #3f51b5;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.table {
+  font-size: 0.95rem;
+  
+  th {
+    font-weight: 500;
+  }
+}
+
+.card-header {
+  border-bottom: none;
+}
+
+.display-6 {
+  font-size: 2rem;
+}
+
+@media (max-width: 768px) {
+  .table {
+    font-size: 0.85rem;
+  }
+  
+  .display-6 {
+    font-size: 1.75rem;
+  }
+}
